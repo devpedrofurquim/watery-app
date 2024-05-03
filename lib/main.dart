@@ -1,4 +1,8 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:watery/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,6 +31,8 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
+  int currentPage = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +45,7 @@ class _RootPageState extends State<RootPage> {
         backgroundColor: Theme.of(context)
             .primaryColor, // Set the app bar color to the primary color
       ),
+      body: const HomePage(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           debugPrint('Floating Action Pressed');
@@ -49,6 +56,18 @@ class _RootPageState extends State<RootPage> {
           color: Colors.white,
           size: 48,
         ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.person), label: 'Profile')
+        ],
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPage = index;
+          });
+        },
+        selectedIndex: currentPage,
       ),
     );
   }
