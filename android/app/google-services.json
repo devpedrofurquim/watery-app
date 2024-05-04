@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "323321818586",
+    "project_id": "watery-dc101",
+    "storage_bucket": "watery-dc101.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:323321818586:android:1c09773ac6da8a5ba924e3",
+        "android_client_info": {
+          "package_name": "com.example.watery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXqebnfkfDSKsX5yxTkoSJvsRMGeHAK80"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
