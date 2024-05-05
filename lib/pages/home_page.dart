@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:watery/auth.dart';
 import 'package:watery/models/plant.dart';
 
+import 'add_plant_page.dart';
 import 'plant_details.dart'; // Import your Plant model here
 
 class HomePage extends StatefulWidget {
@@ -17,29 +18,29 @@ class _HomePageState extends State<HomePage> {
 
   final List<Plant> userPlants = [
     Plant(
-      name: 'Rose',
-      imageUrl: 'images/plant.jpg',
+      name: 'Rosa',
+      imageUrl: 'images/rosa.jpg',
       health: 0.3,
       wateringSchedule: 'Duas vezes por semana',
       careInstructions: 'Mantenha em luz do sol direta',
     ),
     Plant(
-      name: 'Lavender',
-      imageUrl: 'images/plant.jpg',
+      name: 'Girassol',
+      imageUrl: 'images/girassol.jpg',
       health: 0.2,
       wateringSchedule: 'Uma vez por semana',
       careInstructions: 'Rega leve',
     ),
     Plant(
-      name: 'Sunflower',
-      imageUrl: 'images/plant.jpg',
+      name: 'Bonsai',
+      imageUrl: 'images/bonsai.jpg',
       health: 1,
       wateringSchedule: 'A cada dois dias',
       careInstructions: 'Requer exposição direta ao sol',
     ),
     Plant(
-      name: 'Cactus',
-      imageUrl: 'images/plant.jpg',
+      name: 'Espada de São Jorge',
+      imageUrl: 'images/espada.jpg',
       health: 0.2,
       wateringSchedule: 'Uma vez por mês',
       careInstructions: 'Evitar regar muito',
@@ -70,7 +71,10 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          debugPrint('Add new button clicked');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddPlantPage()),
+          );
         },
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
@@ -162,9 +166,10 @@ class _PlantItemState extends State<PlantItem> {
           Stack(
             alignment: Alignment.topLeft,
             children: [
-              Image.asset(
-                widget.plant.imageUrl,
-                fit: BoxFit.cover,
+              Container(
+                child: Image.asset(
+                  widget.plant.imageUrl,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
