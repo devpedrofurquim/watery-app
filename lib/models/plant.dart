@@ -3,7 +3,7 @@ class Plant {
   final String imageUrl;
   final String wateringSchedule;
   final String careInstructions;
-  final double health;
+  double health;
 
   Plant(
       {required this.name,

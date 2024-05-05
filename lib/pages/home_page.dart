@@ -3,41 +3,46 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:watery/auth.dart';
 import 'package:watery/models/plant.dart';
 
-import '../plant_details.dart'; // Import your Plant model here
+import 'plant_details.dart'; // Import your Plant model here
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final User? user = Auth().currentUser;
 
   final List<Plant> userPlants = [
     Plant(
       name: 'Rose',
       imageUrl: 'images/plant.jpg',
-      health: 0.8,
-      wateringSchedule: 'Twice a week',
-      careInstructions: 'Keep in direct sunlight',
+      health: 0.3,
+      wateringSchedule: 'Duas vezes por semana',
+      careInstructions: 'Mantenha em luz do sol direta',
     ),
     Plant(
       name: 'Lavender',
       imageUrl: 'images/plant.jpg',
-      health: 0.5,
-      wateringSchedule: 'Once a week',
-      careInstructions: 'Water lightly',
+      health: 0.2,
+      wateringSchedule: 'Uma vez por semana',
+      careInstructions: 'Rega leve',
     ),
     Plant(
       name: 'Sunflower',
       imageUrl: 'images/plant.jpg',
       health: 1,
-      wateringSchedule: 'Every other day',
-      careInstructions: 'Requires lots of sunlight',
+      wateringSchedule: 'A cada dois dias',
+      careInstructions: 'Requer exposição direta ao sol',
     ),
     Plant(
       name: 'Cactus',
       imageUrl: 'images/plant.jpg',
       health: 0.2,
-      wateringSchedule: 'Once a month',
-      careInstructions: 'Avoid overwatering',
+      wateringSchedule: 'Uma vez por mês',
+      careInstructions: 'Evitar regar muito',
     ),
   ];
 
@@ -47,14 +52,6 @@ class HomePage extends StatelessWidget {
 
   Widget _title() {
     return const Text('Watery');
-  }
-
-  Widget _userUid() {
-    return Text(user?.email ?? 'User email');
-  }
-
-  Widget _signOutButton() {
-    return ElevatedButton(onPressed: signOut, child: const Text('Sign Out'));
   }
 
   @override
@@ -82,11 +79,8 @@ class HomePage extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.green,
         fixedColor: Colors.white,
-        currentIndex:
-            0, // Current index of the selected tab (default is the first tab)
-        onTap: (int index) {
-          // Add functionality to switch between tabs
-        },
+        currentIndex: 0,
+        onTap: (int index) {},
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -104,50 +98,28 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 20,
+            const Text(
+              'Seu jardim digital',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
-            const Text('Your Plants'),
-            const SizedBox(height: 10),
             userPlants.isEmpty
-                ? const Center(child: Text('You have no plants listed'))
+                ? const Center(
+                    child: Text('Você não possui nenhuma planta listada'))
                 : GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 0,
+                    ),
                     itemCount: userPlants.length,
                     itemBuilder: (context, index) {
                       Plant plant = userPlants[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    PlantDetailsScreen(plant: plant),
-                              ));
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              plant.imageUrl,
-                              fit: BoxFit.cover,
-                            ),
-                            Text(
-                              plant.name,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            PlantHealthBar(value: plant.health),
-                          ],
-                        ),
-                      );
+                      return PlantItem(plant: plant);
                     },
-                  )
+                  ),
           ],
         ),
       ),
@@ -155,22 +127,110 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class PlantHealthBar extends StatelessWidget {
+class PlantItem extends StatefulWidget {
+  final Plant plant;
+
+  const PlantItem({super.key, required this.plant});
+
+  @override
+  _PlantItemState createState() => _PlantItemState();
+}
+
+class _PlantItemState extends State<PlantItem> {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        // Navigate to the detail screen and wait for a result
+        final updatedHealth = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PlantDetailsScreen(plant: widget.plant),
+          ),
+        );
+
+        // Check if the returned value is not null and update the health value accordingly
+        if (updatedHealth != null) {
+          setState(() {
+            widget.plant.health = updatedHealth;
+          });
+        }
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Stack(
+            alignment: Alignment.topLeft,
+            children: [
+              Image.asset(
+                widget.plant.imageUrl,
+                fit: BoxFit.cover,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PlantHealthBar(value: widget.plant.health),
+                    Text(
+                      widget.plant.name,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PlantHealthBar extends StatefulWidget {
   final double value; // Value between 0 and 1 representing the health status
-  final Color color;
 
   const PlantHealthBar({
     super.key,
     required this.value,
-    this.color = Colors.green,
   });
+
+  @override
+  _PlantHealthBarState createState() => _PlantHealthBarState();
+}
+
+class _PlantHealthBarState extends State<PlantHealthBar> {
+  late Color _color;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateColor();
+  }
+
+  @override
+  void didUpdateWidget(covariant PlantHealthBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _updateColor();
+  }
+
+  void _updateColor() {
+    setState(() {
+      _color = widget.value < 0.5 ? Colors.red : Colors.green;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return LinearProgressIndicator(
-      value: value,
-      backgroundColor: color.withOpacity(0.5),
-      valueColor: AlwaysStoppedAnimation<Color>(color),
+      minHeight: 10,
+      value: widget.value,
+      backgroundColor: _color.withOpacity(0.5),
+      valueColor: AlwaysStoppedAnimation<Color>(_color),
     );
   }
 }
